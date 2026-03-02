@@ -2,33 +2,43 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Viet Nam Women Days</title>
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="letter.ico">
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body, html {
+    width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
 }
+
 body {
     min-height: 100vh;
     background-image: url("kali-tiles.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    background-attachment: fixed;
 }
+
 #loading {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background-image: url("bg-loading.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    background-attachment: fixed;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,9 +46,35 @@ body {
     z-index: 9999;
     color: #ffffff;
     font-family: 'Pinyon Script', cursive;
-    font-size: 64px;
+    font-size: clamp(2rem, 8vw, 4rem);
     font-weight: 400;
     animation: fadeIn 0.5s forwards;
+    padding: 20px;
+    overflow: hidden;
+}
+
+#loading2 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("bg-loading.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    color: #ffffff;
+    font-family: 'Pinyon Script', cursive;
+    font-size: clamp(2rem, 8vw, 4rem);
+    font-weight: 400;
+    padding: 20px;
+    overflow: hidden;
 }
 
 @keyframes fadeIn {
@@ -53,82 +89,121 @@ body {
     0%, 100% { opacity: 0; }
     50% { opacity: 1; }
 }
+
 #loading.fade-out {
     animation: fadeOut 0.2s forwards;
 }
+
 .progress-bar {
-    width: 500px;
+    width: clamp(200px, 80vw, 500px);
     height: 20px;
     background: #333;
     border-radius: 10px;
     overflow: hidden;
     margin-top: 20px;
 }
+
 .progress {
     width: 0%;
     height: 100%;
     background: #ffffff;
     transition: width 0.5s;
 }
+
 #progress-text {
     font-family: 'Pinyon Script', cursive;
-    font-size: 24px;
+    font-size: clamp(1rem, 4vw, 1.5rem);
     margin-top: 10px;
     color: #ffffff;
 }
+
 #ready-question {
     display: none;
     text-align: center;
     color: #ffffff;
     font-family: 'Times New Roman', cursive;
-    font-size: 48px;
+    font-size: clamp(1.5rem, 6vw, 3rem);
     margin-top: 20px;
 }
+
 #ready-button {
     display: none;
     margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 24px;
+    padding: clamp(8px, 2vw, 15px) clamp(15px, 4vw, 25px);
+    font-size: clamp(1rem, 4vw, 1.5rem);
     font-family: 'Times New Roman', cursive;
     background-color: #ffffff;
     color: #333;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
-#ready-button:hover { background-color: #ddd; }
+
+#ready-button:hover { 
+    background-color: #ddd; 
+}
+
 #name-form {
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    width: 100%;
+    min-height: 100vh;
     background-image: url("bgm-hopthoai.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    background-attachment: fixed;
     font-family: 'Pinyon Script', cursive;
+    padding: 20px;
+    overflow: auto;
 }
-#name-form h1 { font-size: 48px; color: #880e4f; }
+
+#name-form h1 { 
+    font-size: clamp(1.5rem, 8vw, 3rem);
+    color: #880e4f;
+    text-align: center;
+    margin: 0 0 20px 0;
+}
+
 #name-form input {
-    padding: 10px;
-    font-size: 24px;
+    padding: 10px 15px;
+    font-size: clamp(0.9rem, 4vw, 1.5rem);
     border: 2px solid #880e4f;
     border-radius: 5px;
     outline: none;
     margin-top: 20px;
+    max-width: 300px;
+    width: 90%;
+    font-family: 'Pinyon Script', cursive;
 }
+
 #name-form button {
     margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 24px;
+    padding: clamp(8px, 2vw, 15px) clamp(15px, 4vw, 25px);
+    font-size: clamp(0.9rem, 4vw, 1.5rem);
     background-color: #880e4f;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
+    font-family: 'Pinyon Script', cursive;
 }
-#name-form button:hover { background-color: #aa265f; }
+
+#name-form button:hover { 
+    background-color: #aa265f; 
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 480px) {
+    #loading {
+        justify-content: flex-start;
+        padding-top: 40px;
+    }
+}
 </style>
 </head>
 <body>
@@ -136,24 +211,47 @@ body {
     <div id="loading-text">Loading...</div>
     <div class="progress-bar"><div class="progress"></div></div>
     <div id="progress-text">0%</div>
+    <!-- dynamic message shown during wait after submit -->
+    <div id="dynamic-wait" style="display:none;position:absolute;bottom:60px;font-size:clamp(0.9rem,4vw,1.2rem);color:#ffffff;font-family:'Times New Roman',cursive;text-align:center;width:90%;max-width:600px;">
+        Đang tìm bức ảnh đẹp nhất của bạn...
+    </div>
     <div id="ready-question">Cậu đã sẵn sàng chưa?</div>
     <button id="ready-button">Gét gô</button>
 </div>
 <div id="name-form">
-    <h1>Xin hỏi quý danh của tiểu thư là:</h1>
-    <input type="text" id="nameInput" placeholder="Nhập tên của bạn">
+    <h1>Xin hỏi ngày tháng năm sinh của bạn (ví dụ: 0311):</h1>
+    <input type="text" id="nameInput" placeholder="0311">
     <button id="submitName">Xác nhận</button>
 </div>
+
+
+
+
 <script>
+// declare variables in outer scope so event handlers can access them
+let progress = 0;
+let progressBar;
+let progressText;
+let loadingText;
+let loadingScreen;
+let readyQuestion;
+let readyButton;
+let nameForm;
+let dynamicWait;
+let dynamicInterval;
+
+// variables for new wait-screen
+
 window.onload = function() {
-    let progress = 0;
-    const progressBar = document.querySelector('.progress');
-    const progressText = document.getElementById('progress-text');
-    const loadingText = document.getElementById('loading-text');
-    const loadingScreen = document.getElementById('loading');
-    const readyQuestion = document.getElementById('ready-question');
-    const readyButton = document.getElementById('ready-button');
-    const nameForm = document.getElementById('name-form');
+    progress = 0;
+    progressBar = document.querySelector('.progress');
+    progressText = document.getElementById('progress-text');
+    loadingText = document.getElementById('loading-text');
+    loadingScreen = document.getElementById('loading');
+    dynamicWait = document.getElementById('dynamic-wait');
+    readyQuestion = document.getElementById('ready-question');
+    readyButton = document.getElementById('ready-button');
+    nameForm = document.getElementById('name-form');
 
     const interval = setInterval(() => {
         progress += 1;
@@ -178,44 +276,66 @@ window.onload = function() {
     }, 100);
 }
 
-document.getElementById('submitName').addEventListener('click', () => {
-    const nameInput = document.getElementById('nameInput').value;
-    if (nameInput.trim() !== '') {
-        document.body.innerHTML = `
-            <div id="view" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background-color:#fce4ec;font-family:'Pinyon Script',cursive;position:relative;">
-                <h1 style="font-size:48px;color:#880e4f;">Tiểu thư ${nameInput}, hãy chiêm ngưỡng vẻ đẹp của công nghệ.</h1>
-                <div id="dynamic-text" style="position:absolute;bottom:20px;font-size:20px;color:#880e4f;font-family:'Times New Roman',cursive;opacity:0;animation:fadeInOut 4s infinite;">
-                    Đang tìm bức ảnh đẹp nhất của bạn...
-                </div>
-            </div>
-        `;
+// submit handler now has access to outer variables
 
-        const dynamicText = document.getElementById('dynamic-text');
+function handleSubmit() {
+    const dobInput = document.getElementById('nameInput').value;
+        if (dobInput.trim() !== '') {
+        // hide the input form
+        nameForm.style.display = 'none';
+
+        // clone the original loading screen to keep it pristine
+        const newLoading = loadingScreen.cloneNode(true);
+        newLoading.id = 'loading2';
+        newLoading.classList.remove('fade-out');
+        newLoading.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;background-image:url("bg-loading.jpg");background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:fixed;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffffff;font-family:"Pinyon Script",cursive;font-size:clamp(2rem,8vw,4rem);font-weight:400;padding:20px;overflow:hidden;';
+        document.body.appendChild(newLoading);
+
+        // grab elements inside clone
+        const cloneProgressBar = newLoading.querySelector('.progress');
+        const cloneProgressText = newLoading.querySelector('#progress-text');
+        const cloneLoadingText = newLoading.querySelector('#loading-text');
+        const cloneReadyQuestion = newLoading.querySelector('#ready-question');
+        const cloneReadyButton = newLoading.querySelector('#ready-button');
+        const cloneDynamic = newLoading.querySelector('#dynamic-wait');
+
+        cloneLoadingText.textContent = "Vui lòng chờ...";
+        if (cloneReadyQuestion) cloneReadyQuestion.style.display = 'none';
+        if (cloneReadyButton) cloneReadyButton.style.display = 'none';
+
+        // show dynamic text toggling
+        cloneDynamic.style.display = 'block';
         let toggle = true;
-        setInterval(() => {
-            dynamicText.textContent = toggle ? "Đang viết nên lời chúc tốt đẹp nhất..." : "Đang tìm bức ảnh đẹp nhất của bạn...";
+        const localDynamic = setInterval(() => {
+            cloneDynamic.textContent = toggle ?
+                "Đang viết nên lời chúc tốt đẹp nhất..." :
+                "Đang tìm bức ảnh đẹp nhất của bạn...";
             toggle = !toggle;
         }, 4000);
 
-        // Sau 8 giây thì fade out và hiện ảnh nền PNG
+        // reset progress
+        let prog = 0;
+        cloneProgressBar.style.width = '0%';
+        cloneProgressText.textContent = '0%';
+
+        const localProgress = setInterval(() => {
+            prog += 12.5;
+            if (prog > 100) prog = 100;
+            cloneProgressBar.style.width = prog + '%';
+            cloneProgressText.textContent = Math.floor(prog) + '%';
+            if (prog >= 100) clearInterval(localProgress);
+        }, 1000);
+
         setTimeout(() => {
-            document.body.style.transition = "opacity 2s";
-            document.body.style.opacity = "0";
-            setTimeout(() => {
-                document.body.innerHTML = `
-                    <div style="width:100vw;height:100vh;background:url('main-content.png') center/cover no-repeat;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Pinyon Script',cursive;color:#fff;font-size:48px;text-shadow:2px 2px 8px #000;position:relative;">
-                        <div style="position:absolute;bottom:40px;text-align:center;width:100%;">
-                            Chúc mừng ngày Phụ nữ Việt Nam, tiểu thư ${nameInput}!
-                        </div>
-                    </div>
-                `;
-                document.body.style.opacity = "1";
-            }, 2000);
+            clearInterval(localDynamic);
+            window.location.href = 'asset/manh.html';
         }, 8000);
     } else {
-        alert('Vui lòng nhập tên của bạn!');
+        alert('Vui lòng nhập ngày tháng năm sinh!');
     }
-});
+}
+
+document.getElementById('submitName').addEventListener('click', handleSubmit);
 </script>
 </body>
 </html>
