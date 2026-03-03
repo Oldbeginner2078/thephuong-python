@@ -1,1 +1,442 @@
-<h1>mylinh</h1>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Mylinh - Rèm Ảnh Tương Tác</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow: hidden !important;
+        }
+
+        body {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .slideshow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden !important;
+            background: #000;
+        }
+
+        /* Container cho ảnh */
+        .image-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        /* Hiệu ứng rèm */
+        .curtain {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, #8B0000 0%, #DC143C 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: inset -5px 0 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .curtain.left {
+            left: 0;
+            transform: translateX(0);
+        }
+
+        .curtain.right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .slideshow-container.opened .curtain.left {
+            transform: translateX(-100%);
+        }
+
+        .slideshow-container.opened .curtain.right {
+            transform: translateX(100%);
+        }
+
+        .curtain-text {
+            color: white;
+            font-size: clamp(0.8rem, 3vw, 1.5rem);
+            font-weight: bold;
+            text-align: center;
+            pointer-events: none;
+            user-select: none;
+            animation: pulse 1.5s infinite;
+            padding: 20px;
+            white-space: wrap;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        /* Trang trí rèm */
+        .curtain::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 255, 255, 0.1) 2px,
+                rgba(255, 255, 255, 0.1) 4px
+            );
+            pointer-events: none;
+        }
+
+        /* Chỉ báo vuốt */
+        .swipe-indicator {
+            position: absolute;
+            bottom: clamp(20px, 3%, 30px);
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            z-index: 50;
+            animation: fadeInOut 2s infinite;
+            pointer-events: none;
+            font-size: clamp(0.8rem, 2vh, 1rem);
+        }
+
+        .swipe-indicator.hidden {
+            display: none;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .arrow-up {
+            font-size: clamp(1.5rem, 4vh, 2rem);
+            animation: slideUp 1.5s infinite;
+            line-height: 1;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        @keyframes slideUp {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Image counter */
+        .image-counter {
+            position: absolute;
+            top: clamp(10px, 2%, 20px);
+            right: clamp(10px, 2%, 20px);
+            color: white;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            z-index: 50;
+            background: rgba(0, 0, 0, 0.5);
+            padding: clamp(8px, 1vw, 15px);
+            border-radius: 20px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            .swipe-indicator {
+                display: none;
+            }
+
+            .curtain-text {
+                font-size: clamp(0.7rem, 2vw, 1.2rem);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .curtain-text {
+                font-size: clamp(0.75rem, 3vw, 1rem);
+                padding: 15px;
+            }
+
+            .image-counter {
+                top: clamp(8px, 1%, 15px);
+                right: clamp(8px, 1%, 15px);
+                padding: clamp(6px, 0.8vw, 12px);
+                font-size: clamp(0.8rem, 2vw, 1rem);
+            }
+
+            .swipe-indicator {
+                bottom: clamp(15px, 2%, 25px);
+                font-size: clamp(0.75rem, 1.8vh, 0.9rem);
+            }
+
+            .arrow-up {
+                font-size: clamp(1.2rem, 3vh, 1.5rem);
+                margin-bottom: 3px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .curtain-text {
+                font-size: 0.8rem;
+                padding: 10px;
+                line-height: 1.2;
+            }
+        }
+
+        /* Safe area support */
+        @supports (padding: max(0px)) {
+            html, body {
+                padding: 0;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container" id="slideshowContainer">
+        <div class="image-wrapper">
+            <div class="slide active">
+                <img src="1.png" alt="Ảnh 1" loading="eager">
+            </div>
+            <div class="slide">
+                <img src="6.png" alt="Ảnh 2" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Rèm trái -->
+        <div class="curtain left" id="curtainLeft">
+            <div class="curtain-text">👈 CLICK ĐỂ MỞ</div>
+        </div>
+
+        <!-- Rèm phải -->
+        <div class="curtain right" id="curtainRight">
+            <div class="curtain-text">CLICK ĐỂ MỞ 👉</div>
+        </div>
+
+        <!-- Chỉ báo vuốt -->
+        <div class="swipe-indicator" id="swipeIndicator">
+            <span class="arrow-up">⬆️</span>
+            <div>Vuốt lên</div>
+        </div>
+
+        <!-- Counter ảnh -->
+        <div class="image-counter">
+            <span id="currentImage">1</span> / <span id="totalImages">2</span>
+        </div>
+    </div>
+
+    <script>
+        // Prevent any scrolling
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        
+        // Lock viewport
+        let lastTouchY = 0;
+        document.addEventListener('touchstart', (e) => {
+            lastTouchY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+                return;
+            }
+        }, { passive: false });
+
+        // Disable all scrolling methods
+        window.addEventListener('wheel', (e) => {
+            const slideshowContainer = document.getElementById('slideshowContainer');
+            if (slideshowContainer && !slideshowContainer.classList.contains('opened')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        window.addEventListener('scroll', () => {
+            window.scrollTo(0, 0);
+        });
+
+        const slideshowContainer = document.getElementById('slideshowContainer');
+        const curtainLeft = document.getElementById('curtainLeft');
+        const curtainRight = document.getElementById('curtainRight');
+        const swipeIndicator = document.getElementById('swipeIndicator');
+        const slides = document.querySelectorAll('.slide');
+        const currentImageSpan = document.getElementById('currentImage');
+        const totalImagesSpan = document.getElementById('totalImages');
+
+        let currentSlide = 0;
+        let isOpened = false;
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        // Tính tổng số ảnh
+        totalImagesSpan.textContent = slides.length;
+
+        // Click để mở rèm
+        function openCurtains() {
+            if (!isOpened) {
+                slideshowContainer.classList.add('opened');
+                isOpened = true;
+                swipeIndicator.classList.remove('hidden');
+            }
+        }
+
+        curtainLeft.addEventListener('click', openCurtains);
+        curtainRight.addEventListener('click', openCurtains);
+
+        // Touch/Swipe event
+        document.addEventListener('touchstart', (e) => {
+            if (isOpened) {
+                touchStartY = e.changedTouches[0].screenY;
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            if (isOpened) {
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+            }
+        }, { passive: true });
+
+        // Mouse wheel event
+        document.addEventListener('wheel', (e) => {
+            if (isOpened) {
+                if (e.deltaY > 0) {
+                    nextSlide();
+                } else if (e.deltaY < 0) {
+                    prevSlide();
+                }
+            }
+        }, { passive: true });
+
+        function handleSwipe() {
+            const distance = touchStartY - touchEndY;
+            const threshold = 50; // Độ nhạy vuốt
+
+            if (Math.abs(distance) > threshold) {
+                if (distance > 0) {
+                    // Vuốt lên
+                    nextSlide();
+                } else {
+                    // Vuốt xuống
+                    prevSlide();
+                }
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide++;
+                slides[currentSlide].classList.add('active');
+                updateCounter();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide--;
+                slides[currentSlide].classList.add('active');
+                updateCounter();
+            }
+        }
+
+        function updateCounter() {
+            currentImageSpan.textContent = currentSlide + 1;
+        }
+
+        // Keyboard event
+        document.addEventListener('keydown', (e) => {
+            if (isOpened) {
+                if (e.key === 'ArrowUp') {
+                    nextSlide();
+                } else if (e.key === 'ArrowDown') {
+                    prevSlide();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
