@@ -278,9 +278,22 @@ window.onload = function() {
 
 // submit handler now has access to outer variables
 
+function normalizeDob(s){
+    return (s||'').toString().replace(/\D/g,'').replace(/^0+/,'');
+}
+
 function handleSubmit() {
     const dobInput = document.getElementById('nameInput').value;
-        if (dobInput.trim() !== '') {
+    if (dobInput.trim() === '') {
+        alert('Vui lòng nhập ngày tháng năm sinh!');
+        return;
+    }
+
+    fetch('/data.json').then(r => r.json()).then(list => {
+        const target = normalizeDob(dobInput);
+        const found = list.find(item => normalizeDob(item.dob) === target);
+        const redirectTo = found ? ('asset/' + found.file) : null;
+
         // hide the input form
         nameForm.style.display = 'none';
 
@@ -299,15 +312,15 @@ function handleSubmit() {
         const cloneReadyButton = newLoading.querySelector('#ready-button');
         const cloneDynamic = newLoading.querySelector('#dynamic-wait');
 
-        cloneLoadingText.textContent = "Vui lòng chờ...";
+        if(cloneLoadingText) cloneLoadingText.textContent = "Vui lòng chờ...";
         if (cloneReadyQuestion) cloneReadyQuestion.style.display = 'none';
         if (cloneReadyButton) cloneReadyButton.style.display = 'none';
 
         // show dynamic text toggling
-        cloneDynamic.style.display = 'block';
+        if(cloneDynamic) cloneDynamic.style.display = 'block';
         let toggle = true;
         const localDynamic = setInterval(() => {
-            cloneDynamic.textContent = toggle ?
+            if(cloneDynamic) cloneDynamic.textContent = toggle ?
                 "Đang viết nên lời chúc tốt đẹp nhất..." :
                 "Đang tìm bức ảnh đẹp nhất của bạn...";
             toggle = !toggle;
@@ -315,24 +328,31 @@ function handleSubmit() {
 
         // reset progress
         let prog = 0;
-        cloneProgressBar.style.width = '0%';
-        cloneProgressText.textContent = '0%';
+        if(cloneProgressBar) cloneProgressBar.style.width = '0%';
+        if(cloneProgressText) cloneProgressText.textContent = '0%';
 
         const localProgress = setInterval(() => {
             prog += 12.5;
             if (prog > 100) prog = 100;
-            cloneProgressBar.style.width = prog + '%';
-            cloneProgressText.textContent = Math.floor(prog) + '%';
+            if(cloneProgressBar) cloneProgressBar.style.width = prog + '%';
+            if(cloneProgressText) cloneProgressText.textContent = Math.floor(prog) + '%';
             if (prog >= 100) clearInterval(localProgress);
         }, 1000);
 
         setTimeout(() => {
             clearInterval(localDynamic);
-            window.location.href = 'asset/manh.html';
+            if (redirectTo) {
+                window.location.href = redirectTo;
+            } else {
+                alert('Không tìm thấy hồ sơ với ngày sinh đã nhập.');
+                newLoading.remove();
+                nameForm.style.display = 'flex';
+            }
         }, 8000);
-    } else {
-        alert('Vui lòng nhập ngày tháng năm sinh!');
-    }
+    }).catch(err => {
+        alert('Lỗi khi đọc dữ liệu.');
+        console.error(err);
+    });
 }
 
 document.getElementById('submitName').addEventListener('click', handleSubmit);
