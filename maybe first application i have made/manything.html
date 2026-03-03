@@ -298,7 +298,7 @@ function handleSubmit() {
         return;
     }
 
-    fetch('/data.json').then(r => r.json()).then(list => {
+    fetch('data.json').then(r => r.json()).then(list => {
         const target = normalizeDob(dobInput);
         const matches = list.filter(item => normalizeDob(item.dob) === target);
 
