@@ -13,7 +13,8 @@
   },
   {
     "dob": "109",
-    "file": "mylinh.html"
+    "file": "mylinh.html",
+    "block": "A01"
   },
   {
     "dob": "1203",
@@ -41,7 +42,8 @@
   },
   {
     "dob": "109",
-    "file": "tramy.html"
+    "file": "tramy.html",
+    "block": "A00"
   },
   {
     "dob": "2408",
