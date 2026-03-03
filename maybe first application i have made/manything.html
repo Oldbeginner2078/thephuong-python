@@ -249,7 +249,23 @@ let nameForm;
 let dynamicWait;
 let dynamicInterval;
 
-// variables for new wait-screen
+// Hardcode data to avoid fetch issues with spaces in path
+const guestData = [
+  { "dob": "1708", "file": "giahan.html" },
+  { "dob": "204", "file": "chauanh.html" },
+  { "dob": "1709", "file": "ngocanh.html" },
+  { "dob": "109", "file": "mylinh.html", "block": "A01" },
+  { "dob": "1203", "file": "hamy.html" },
+  { "dob": "1512", "file": "maiphuong.html" },
+  { "dob": "207", "file": "vytrang.html" },
+  { "dob": "1501", "file": "thanhtam.html" },
+  { "dob": "311", "file": "maianh.html" },
+  { "dob": "2407", "file": "myhanh.html" },
+  { "dob": "109", "file": "tramy.html", "block": "A00" },
+  { "dob": "2408", "file": "thientrang.html" },
+  { "dob": "1908", "file": "huonggiang.html" },
+  { "dob": "1111", "file": "nhatlinh.html" }
+];
 
 window.onload = function() {
     progress = 0;
@@ -298,79 +314,75 @@ function handleSubmit() {
         return;
     }
 
-    fetch('data.json').then(r => r.json()).then(list => {
-        const target = normalizeDob(dobInput);
-        const matches = list.filter(item => normalizeDob(item.dob) === target);
+    // Use hardcoded data instead of fetch
+    const target = normalizeDob(dobInput);
+    const matches = guestData.filter(item => normalizeDob(item.dob) === target);
 
-        // hide the input form
-        nameForm.style.display = 'none';
+    // hide the input form
+    nameForm.style.display = 'none';
 
-        // clone the original loading screen to keep it pristine
-        const newLoading = loadingScreen.cloneNode(true);
-        newLoading.id = 'loading2';
-        newLoading.classList.remove('fade-out');
-        newLoading.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;background-image:url("bg-loading.jpg");background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:fixed;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffffff;font-family:"Pinyon Script",cursive;font-size:clamp(2rem,8vw,4rem);font-weight:400;padding:20px;overflow:hidden;';
-        document.body.appendChild(newLoading);
+    // clone the original loading screen to keep it pristine
+    const newLoading = loadingScreen.cloneNode(true);
+    newLoading.id = 'loading2';
+    newLoading.classList.remove('fade-out');
+    newLoading.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;background-image:url("bg-loading.jpg");background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:fixed;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffffff;font-family:"Pinyon Script",cursive;font-size:clamp(2rem,8vw,4rem);font-weight:400;padding:20px;overflow:hidden;';
+    document.body.appendChild(newLoading);
 
-        // grab elements inside clone
-        const cloneProgressBar = newLoading.querySelector('.progress');
-        const cloneProgressText = newLoading.querySelector('#progress-text');
-        const cloneLoadingText = newLoading.querySelector('#loading-text');
-        const cloneReadyQuestion = newLoading.querySelector('#ready-question');
-        const cloneReadyButton = newLoading.querySelector('#ready-button');
-        const cloneDynamic = newLoading.querySelector('#dynamic-wait');
+    // grab elements inside clone
+    const cloneProgressBar = newLoading.querySelector('.progress');
+    const cloneProgressText = newLoading.querySelector('#progress-text');
+    const cloneLoadingText = newLoading.querySelector('#loading-text');
+    const cloneReadyQuestion = newLoading.querySelector('#ready-question');
+    const cloneReadyButton = newLoading.querySelector('#ready-button');
+    const cloneDynamic = newLoading.querySelector('#dynamic-wait');
 
-        if(cloneLoadingText) cloneLoadingText.textContent = "Vui lòng chờ...";
-        if (cloneReadyQuestion) cloneReadyQuestion.style.display = 'none';
-        if (cloneReadyButton) cloneReadyButton.style.display = 'none';
+    if(cloneLoadingText) cloneLoadingText.textContent = "Vui lòng chờ...";
+    if (cloneReadyQuestion) cloneReadyQuestion.style.display = 'none';
+    if (cloneReadyButton) cloneReadyButton.style.display = 'none';
 
-        // show dynamic text toggling
-        if(cloneDynamic) cloneDynamic.style.display = 'block';
-        let toggle = true;
-        const localDynamic = setInterval(() => {
-            if(cloneDynamic) cloneDynamic.textContent = toggle ?
-                "Đang viết nên lời chúc tốt đẹp nhất..." :
-                "Đang tìm bức ảnh đẹp nhất của bạn...";
-            toggle = !toggle;
-        }, 4000);
+    // show dynamic text toggling
+    if(cloneDynamic) cloneDynamic.style.display = 'block';
+    let toggle = true;
+    const localDynamic = setInterval(() => {
+        if(cloneDynamic) cloneDynamic.textContent = toggle ?
+            "Đang viết nên lời chúc tốt đẹp nhất..." :
+            "Đang tìm bức ảnh đẹp nhất của bạn...";
+        toggle = !toggle;
+    }, 4000);
 
-        // reset progress
-        let prog = 0;
-        if(cloneProgressBar) cloneProgressBar.style.width = '0%';
-        if(cloneProgressText) cloneProgressText.textContent = '0%';
+    // reset progress
+    let prog = 0;
+    if(cloneProgressBar) cloneProgressBar.style.width = '0%';
+    if(cloneProgressText) cloneProgressText.textContent = '0%';
 
-        const localProgress = setInterval(() => {
-            prog += 12.5;
-            if (prog > 100) prog = 100;
-            if(cloneProgressBar) cloneProgressBar.style.width = prog + '%';
-            if(cloneProgressText) cloneProgressText.textContent = Math.floor(prog) + '%';
-            if (prog >= 100) clearInterval(localProgress);
-        }, 1000);
+    const localProgress = setInterval(() => {
+        prog += 12.5;
+        if (prog > 100) prog = 100;
+        if(cloneProgressBar) cloneProgressBar.style.width = prog + '%';
+        if(cloneProgressText) cloneProgressText.textContent = Math.floor(prog) + '%';
+        if (prog >= 100) clearInterval(localProgress);
+    }, 1000);
 
-        setTimeout(() => {
-            clearInterval(localDynamic);
+    setTimeout(() => {
+        clearInterval(localDynamic);
+        
+        if (matches.length === 0) {
+            alert('Không tìm thấy hồ sơ với ngày sinh đã nhập.');
+            newLoading.remove();
+            nameForm.style.display = 'flex';
+        } else if (matches.length === 1) {
+            // single match - redirect directly
+            window.location.href = 'asset/' + matches[0].file;
+        } else {
+            // multiple matches - show block selection form
+            newLoading.remove();
+            const blockForm = document.getElementById('block-form');
+            blockForm.style.display = 'flex';
             
-            if (matches.length === 0) {
-                alert('Không tìm thấy hồ sơ với ngày sinh đã nhập.');
-                newLoading.remove();
-                nameForm.style.display = 'flex';
-            } else if (matches.length === 1) {
-                // single match - redirect directly
-                window.location.href = 'asset/' + matches[0].file;
-            } else {
-                // multiple matches - show block selection form
-                newLoading.remove();
-                const blockForm = document.getElementById('block-form');
-                blockForm.style.display = 'flex';
-                
-                // store matches in window scope for button handlers
-                window.matchedRecords = matches;
-            }
-        }, 8000);
-    }).catch(err => {
-        alert('Lỗi khi đọc dữ liệu.');
-        console.error(err);
-    });
+            // store matches in window scope for button handlers
+            window.matchedRecords = matches;
+        }
+    }, 8000);
 }
 
 document.getElementById('submitName').addEventListener('click', handleSubmit);
