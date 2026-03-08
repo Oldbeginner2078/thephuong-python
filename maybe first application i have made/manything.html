@@ -249,25 +249,6 @@ let nameForm;
 let dynamicWait;
 let dynamicInterval;
 
-// Hardcode data to avoid fetch issues with spaces in path
-const guestData = [
-  { "dob": "1708", "file": "giahan.html" },
-  { "dob": "204", "file": "chauanh.html" },
-  { "dob": "1709", "file": "ngocanh.html" },
-  { "dob": "109", "file": "mylinh.html", "block": "A01" },
-  { "dob": "1203", "file": "hamy.html" },
-  { "dob": "1512", "file": "maiphuong.html" },
-  { "dob": "207", "file": "vytrang.html" },
-  { "dob": "1501", "file": "thanhtam.html" },
-  { "dob": "311", "file": "maianh.html" },
-  { "dob": "2407", "file": "myhanh.html" },
-  { "dob": "109", "file": "tramy.html", "block": "A00" },
-  { "dob": "2408", "file": "thientrang.html" },
-  { "dob": "1908", "file": "huonggiang.html" },
-  { "dob": "1111", "file": "nhatlinh.html" },
-  { "dob": "0609", "file": "thiduong.html" }
-];
-
 window.onload = function() {
     progress = 0;
     progressBar = document.querySelector('.progress');
@@ -308,14 +289,25 @@ function normalizeDob(s){
     return (s||'').toString().replace(/\D/g,'').replace(/^0+/,'');
 }
 
-function handleSubmit() {
+async function handleSubmit() {
     const dobInput = document.getElementById('nameInput').value;
     if (dobInput.trim() === '') {
         alert('Vui lòng nhập ngày tháng năm sinh!');
         return;
     }
 
-    // Use hardcoded data instead of fetch
+    // Fetch data from data.json
+    let guestData;
+    try {
+        const response = await fetch('./data.json');
+        guestData = await response.json();
+    } catch (error) {
+        alert('Không thể tải dữ liệu. Vui lòng thử lại.');
+        console.error('Fetch error:', error);
+        nameForm.style.display = 'flex';
+        return;
+    }
+
     const target = normalizeDob(dobInput);
     const matches = guestData.filter(item => normalizeDob(item.dob) === target);
 
